@@ -1,40 +1,38 @@
-import matplotlib.pyplot as plt
-import numpy as np
+import turtle
 
-def koch_snowflake(order, size):
-    def koch_curve(order, p1, p2):
-        if order == 0:
-            return [p1, p2]
-        else:
-            p3 = (2 * p1 + p2) / 3
-            p4 = (p1 + 2 * p2) / 3
-            angle = np.pi / 3
-            p5 = p3 + np.array([np.cos(angle) * (p4[0] - p3[0]) - np.sin(angle) * (p4[1] - p3[1]),
-                                np.sin(angle) * (p4[0] - p3[0]) + np.cos(angle) * (p4[1] - p3[1])])
-            return (koch_curve(order-1, p1, p3) +
-                    koch_curve(order-1, p3, p5)[1:] +
-                    koch_curve(order-1, p5, p4)[1:] +
-                    koch_curve(order-1, p4, p2)[1:])
+# Функція для малювання кривої Коха
+def fractal_curve(t, level, length):
+    if level == 0:
+        t.forward(length)
+    else:
+        for angle in [60, -120, 60, 0]:
+            fractal_curve(t, level - 1, length / 3)
+            t.left(angle)
 
-    p1 = np.array([0, 0])
-    p2 = np.array([size, 0])
-    p3 = np.array([size / 2, np.sqrt(size**2 - (size / 2)**2)])
-    return (koch_curve(order, p1, p2)[:-1] +
-            koch_curve(order, p2, p3)[:-1] +
-            koch_curve(order, p3, p1))
+# Функція для малювання сніжинки Коха
+def fractal_snowflake(t, level, length):
+    for _ in range(3):
+        fractal_curve(t, level, length)
+        t.right(120)
 
-def draw_koch_snowflake(order, size):
-    points = np.array(koch_snowflake(order, size))
-    plt.figure(figsize=(8, 8))
-    plt.plot(points[:, 0], points[:, 1], 'b')
-    plt.axis('equal')
-    plt.title(f"Сніжинка Коха рівня {order}")
-    plt.show()
+# Функція для налаштування екрану і початку малювання сніжинки Коха
+def draw_fractal_snowflake(level, length=300):
+    screen = turtle.Screen()
+    screen.bgcolor("white")
 
-def main():
-    order = int(input("Введіть рівень рекурсії для сніжинки Коха: "))
-    size = 400
-    draw_koch_snowflake(order, size)
+    pen = turtle.Turtle()
+    pen.speed(0)
+    pen.penup()
+    pen.goto(-length / 2, length / 3)
+    pen.pendown()
+
+    fractal_snowflake(pen, level, length)
+
+    screen.mainloop()
 
 if __name__ == "__main__":
-    main()
+    try:
+        level = int(input("Введіть рівень рекурсії для сніжинки Коха: "))
+        draw_fractal_snowflake(level)
+    except ValueError:
+        print("Некоректний ввід. Будь ласка, введіть ціле число для рівня рекурсії.")
