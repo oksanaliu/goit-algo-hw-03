@@ -19,9 +19,7 @@ def copy_files(src_dir, dst_dir):
         src_path = os.path.join(src_dir, item)
         if os.path.isdir(src_path):
             # Якщо елемент є директорією, викликаємо функцію рекурсивно
-            new_dst_dir = os.path.join(dst_dir, item)
-            os.makedirs(new_dst_dir, exist_ok=True)
-            copy_files(src_path, new_dst_dir)
+            copy_files(src_path, dst_dir)
         else:
             # Якщо елемент є файлом, копіюємо його
             file_extension = os.path.splitext(item)[1].lstrip('.').lower() or 'no_extension'
